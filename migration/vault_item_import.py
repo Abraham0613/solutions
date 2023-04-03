@@ -61,6 +61,15 @@ def migrate_items(csv_data, options):
     }
 
     linereader = csv.reader(csv_data, delimiter=',', quotechar='"')
+
+    # calculate estimated time to iterate
+    num_rows = sum(1 for row in linereader)
+    minutes_rows = (num_rows * 1.4) / 60 #1.4 seconds is a rough approximation of runtime of a single `op item create ...` command
+    print("Estimated time to import:", minutes_rows, "minutes")
+
+    # reset csv_data to 0 to properly iterate through lines
+    csv_data.seek(0)
+
     heading = next(linereader)
     if 'totp' in heading:
         is_csv_from_web_exporter = True
